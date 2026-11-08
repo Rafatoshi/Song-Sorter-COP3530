@@ -5,7 +5,7 @@
 #include <vector>
 #include "Song.h"
 
-// Alwin: generate the requested number of songs (500 or 10000).
+// Alwin: generate the requested number of songs.
 std::vector<Song> generateSongs(std::size_t count);
 
 #endif
