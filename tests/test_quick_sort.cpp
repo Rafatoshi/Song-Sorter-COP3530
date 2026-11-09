@@ -1,11 +1,8 @@
 // Catch2 tests for quickSort (Ricardo).
 //
-// Quicksort is not stable, so songs with equal view counts may come out in
-// any order. The tests therefore check:
-//   1. view counts are in non-increasing order (most -> least), and
-//   2. no song was lost, duplicated, or altered (same multiset of songs).
-// For larger inputs, the view-count sequence is also compared against
-// std::sort as a reference.
+// Quicksort isn't stable, so tied songs can be in any order. The tests check
+// that view counts are in descending order, that no song was lost or changed,
+// and that the view counts match std::sort.
 
 #include <catch2/catch_test_macros.hpp>
 
@@ -161,16 +158,16 @@ TEST_CASE("quickSort: sorted least-to-most (reverse order)", "[quicksort]") {
 
 TEST_CASE("quickSort: random lists match std::sort", "[quicksort]") {
     SECTION("500 songs") {
-        checkQuickSort(randomSongs(500, 1'000'000'000ULL, 1));
+        checkQuickSort(randomSongs(500, 1000000000ULL, 1));
     }
     SECTION("10,000 songs") {
-        checkQuickSort(randomSongs(10000, 1'000'000'000ULL, 2));
+        checkQuickSort(randomSongs(10000, 1000000000ULL, 2));
     }
     SECTION("100,000 songs") {
-        checkQuickSort(randomSongs(100000, 1'000'000'000ULL, 3));
+        checkQuickSort(randomSongs(100000, 1000000000ULL, 3));
     }
     SECTION("extreme view counts (0 and max)") {
-        std::vector<Song> songs = randomSongs(1000, 1'000'000ULL, 4);
+        std::vector<Song> songs = randomSongs(1000, 1000000ULL, 4);
         songs.push_back({"Zero", 0});
         songs.push_back({"Max", ~0ULL});
         checkQuickSort(songs);

@@ -20,7 +20,6 @@ std::vector<Song> generateSongs(std::size_t count)
         0ULL, 1000000000ULL
     );
 
-    // Generate the requested number of songs.
     for (std::size_t i = 0; i < count; ++i)
     {
         Song newSong;
@@ -31,7 +30,6 @@ std::vector<Song> generateSongs(std::size_t count)
         // Assign a random view count.
         newSong.viewCount = distribution(generator);
 
-        // Add the song to the dataset.
         songs.push_back(newSong);
     }
 

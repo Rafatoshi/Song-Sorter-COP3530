@@ -2,24 +2,12 @@
 
 #include <utility>  // std::swap
 
-// Quicksort (written from scratch) that orders songs from MOST views to
-// LEAST views.
-//
-// Design choices:
-//  - Median-of-three pivot: look at the first, middle, and last songs of the
-//    range and use the median view count as the pivot. This avoids the O(n^2)
-//    worst case on lists that are already sorted or reverse-sorted.
-//  - Hoare partition scheme: two indices walk toward each other and swap
-//    out-of-place songs. Unlike Lomuto, it splits runs of EQUAL view counts
-//    roughly in half, so lists with many ties (common for view counts)
-//    still sort in O(n log n).
-//  - Recurse on the smaller side, loop on the larger side. This keeps the
-//    recursion depth at O(log n), so even 10,000+ songs can't overflow the
-//    call stack.
-//
-// Note: quicksort is NOT stable. Songs with the same view count can come out
-// in any order relative to each other. Only the view-count order is
-// guaranteed.
+// Quicksort, highest view count first.
+// The pivot is the median of the first, middle and last songs, which avoids
+// the O(n^2) case on already sorted lists. Hoare partition splits runs of equal
+// view counts evenly. We recurse on the smaller side and loop on the larger
+// side so the recursion depth stays O(log n).
+// Not stable: songs with equal views can end up in any order.
 
 namespace {
 
@@ -49,7 +37,7 @@ Index medianOfThree(std::vector<Song>& songs, Index lo, Index hi) {
 // [p + 1, hi]. Both sides are non-empty when hi > lo.
 Index partition(std::vector<Song>& songs, Index lo, Index hi) {
     Index mid = medianOfThree(songs, lo, hi);
-    // Copy the pivot VALUE: the pivot song itself may be swapped during the loop.
+    // copy the pivot value since the pivot song can move during the loop
     const unsigned long long pivot = songs[mid].viewCount;
 
     Index i = lo - 1;

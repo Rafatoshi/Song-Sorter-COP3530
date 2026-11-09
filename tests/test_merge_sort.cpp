@@ -1,11 +1,13 @@
-// TODO (Rafael): add Catch2 tests for mergeSort.
+// Catch2 tests for mergeSort (Rafael).
 #include <catch2/catch_test_macros.hpp>
 #include "MergeSort.h"
+#include "SongData.h"
+#include <algorithm>
 #include <vector>
 
 using namespace std;
-// Cases to check: empty, one song, duplicates, already sorted,
-// and descending view-count order.
+// Cases checked: empty, one song, duplicates, already sorted,
+// and mixed order sorted into descending view-count order.
 
 // empty vector
 TEST_CASE("Empty List", "[MergeSort]") {
@@ -27,13 +29,13 @@ TEST_CASE("One song", "[MergeSort]") {
     REQUIRE(songs[0].title == "Song A");
 }
 
-// duplicates
+// duplicates (merge sort is stable, so Song A stays ahead of Song C)
 TEST_CASE("Duplicates", "[MergeSort]") {
     vector<Song> songs = {
         {"Song A", 90},
         {"Song B", 37},
         {"Song C", 90}
-    }
+    };
 
     mergeSort(songs);
 
@@ -48,16 +50,16 @@ TEST_CASE("Already sorted", "[MergeSort]") {
         {"Song A", 90},
         {"Song B", 37},
         {"Song C", 10}
-    }
+    };
 
-    merSort(songs);
+    mergeSort(songs);
 
     REQUIRE(songs[0].viewCount == 90);
     REQUIRE(songs[1].viewCount == 37);
     REQUIRE(songs[2].viewCount == 10);
 }
 
-// descending order
+// mixed order -> descending order
 TEST_CASE("Descending order", "[MergeSort]") {
     vector<Song> songs = {
         {"Song A", 20},
@@ -72,4 +74,27 @@ TEST_CASE("Descending order", "[MergeSort]") {
     REQUIRE(songs[1].title == "Song C");
     REQUIRE(songs[2].title == "Song A");
     REQUIRE(songs[3].title == "Song D");
+}
+
+// full-size data set
+TEST_CASE("100,000 songs match std::sort", "[MergeSort]") {
+    vector<Song> songs = generateSongs(100000);
+    vector<Song> reference = songs;
+
+    mergeSort(songs);
+    stable_sort(reference.begin(), reference.end(),
+                [](const Song& a, const Song& b) { return a.viewCount > b.viewCount; });
+
+    REQUIRE(songs.size() == reference.size());
+
+    // Merge sort is stable, so even the titles of tied songs must match.
+    bool allMatch = true;
+    for (size_t i = 0; i < songs.size(); i++) {
+        if (songs[i].title != reference[i].title ||
+            songs[i].viewCount != reference[i].viewCount) {
+            allMatch = false;
+            break;
+        }
+    }
+    REQUIRE(allMatch);
 }
